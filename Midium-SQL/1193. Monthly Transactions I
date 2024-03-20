@@ -1,0 +1,18 @@
+SELECT DATE_FORMAT(T1.trans_date,'%Y-%m') as month,
+       T1.country, 
+       COUNT(T1.id) as trans_count,
+       COALESCE(subquery.approved_count, 0) as approved_count,
+       SUM(T1.amount) as trans_total_amount,
+       COALESCE(subquery.approved_total_amount, 0) as approved_total_amount
+FROM Transactions as T1
+LEFT JOIN (
+    SELECT DATE_FORMAT(trans_date,'%Y-%m') as month,
+           COALESCE(country, 'Unknown') as country,
+           COUNT(id) as approved_count,
+           SUM(amount) as approved_total_amount
+    FROM Transactions
+    WHERE state='approved'
+    GROUP BY DATE_FORMAT(trans_date,'%Y-%m'), COALESCE(country, 'Unknown')
+) subquery ON DATE_FORMAT(T1.trans_date,'%Y-%m') = subquery.month
+            AND COALESCE(T1.country, 'Unknown') = subquery.country
+GROUP BY DATE_FORMAT(T1.trans_date,'%Y-%m'), COALESCE(T1.country, 'Unknown');
