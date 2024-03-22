@@ -1,2 +1,2 @@
 # LeetCode-Solutions
-Uploading SQL exercise solutions from Leetcode 
+Uploading SQL and python exercise solutions from Leetcode 
